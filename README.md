@@ -13,7 +13,7 @@ The shell is a program that can be executed under most operating systems under t
 To start, we first have to think about how we're able to run a process. When we run a program, it automatically forks itself and continues execution with the program. The execution and forking are because of syscalls. Turns out, there is an assembly instruction that allows us to use these syscalls. In fact it is so simple if you type in syscall in your .s file, compile it and use objdump on it, it'll display 0f 05. However, it is not that simple. These syscall instructions require specific values in the registers before being executed. 
 ### Arguments
 There is a list of syscalls each with ids. These ids will be very important and in fact will be one of the "arguments" we will be passing. The specific syscall we are interested in is called "execve". In summary, this syscall basically replaces the current running process with whatever you want, depending on the other arguments. 
-
+\n
 The second argument we want to pass is the path of the executable that the program will replace it with. In this case, it is /bin/sh.
 The third argument is a list of parameters including the path of the executable as the first list. More specifically, this will point to a list of string pointers of your arguments.
 The fourth argument is an optional argument where we use it to pass in any environment variables.
