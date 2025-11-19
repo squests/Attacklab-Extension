@@ -1,5 +1,5 @@
 # Attacklab-Extension
-Using the CS47 attacklab in a Cybersec Application
+Using the CS47 attacklab as a CTF challenge.
 
 ## Intro
 In the attacklab, we've seen all the touch procedures/functions that we eventually had to call. These functions acted as "dummy" procedures to gain points to continue further on the lab. In a real life cybersec perspective, these dummy procedures would be like attacknodes, gaining access to something that the regular user cannot.
