@@ -75,3 +75,5 @@ syscall
 [ buffer bytes ]  
 [modified ret addr to instructions ]  
 /bin/sh somewhere + pointer to /bin/sh + 8 null bytes
+## Note
+There's a specific way run the program to prevent eof from immediately terminating the program after opening the shell. Figure it out!
